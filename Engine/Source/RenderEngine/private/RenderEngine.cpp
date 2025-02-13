@@ -11,7 +11,7 @@ namespace GameEngine::Render
 
 		RenderObject::Ptr box = std::make_shared<RenderObject>();
 		m_RenderObjects.push_back(box);
-		box->m_mesh = m_rhi->CreateBoxMesh();
+		box->m_mesh = m_rhi->CreatePyramidMesh();
 		box->m_material = m_rhi->GetMaterial(box->m_mesh->GetName());
 		
 		m_rhi->ExecuteCommandLists();
