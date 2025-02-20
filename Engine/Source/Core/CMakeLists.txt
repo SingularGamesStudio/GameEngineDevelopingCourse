@@ -47,6 +47,7 @@ target_sources(Core
 target_include_directories(Core 
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private
+    PUBLIC ${PROJECT_SOURCE_DIR}/Engine/External/inih/src
 )
 
 # windows-specific
@@ -59,6 +60,7 @@ endif()
 
 target_link_libraries(Core PRIVATE
 	Math
+    inih
 )
 
 target_precompile_headers(Core

@@ -51,6 +51,7 @@ target_link_libraries(Game PRIVATE
 	RenderCore
 	Core
 	RenderEngine
+    inih
 )
 
 target_precompile_headers(Game
