@@ -15,15 +15,17 @@ namespace GameEngine
         class CORE_API Config final
         {
         public:
+            Config() = default;
             void ReadIni();
             bool ControlPressed(ControlKey key);
+
+            float Speed = 0.5;
+
         private:
             std::unordered_map<ControlKey, short> keybinds;
+
         };
 
-
-
-
-        extern CORE_API Config* m_globalConfig;
+        extern CORE_API Config* g_globalConfig;
     }
 }
