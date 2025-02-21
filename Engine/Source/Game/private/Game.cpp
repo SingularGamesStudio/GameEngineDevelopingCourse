@@ -83,13 +83,13 @@ namespace GameEngine
 		Math::Vector3f move(0, 0, 0);
 		Math::Vector3f ort = Math::Vector3f(0, 1, 0).CrossProduct(Core::g_MainCamera->GetViewDir());
 		if (Core::g_globalConfig->ControlPressed(Core::MovementForward))
-			move = move + Core::g_MainCamera->GetViewDir();
+			move = move + Core::g_MainCamera->GetViewDir().Normalized();
 		if (Core::g_globalConfig->ControlPressed(Core::MovementBackward))
-			move = move - Core::g_MainCamera->GetViewDir();
+			move = move - Core::g_MainCamera->GetViewDir().Normalized();
 		if (Core::g_globalConfig->ControlPressed(Core::MovementRight))
-			move = move + ort;
+			move = move + ort.Normalized();
 		if (Core::g_globalConfig->ControlPressed(Core::MovementLeft))
-			move = move - ort;
+			move = move - ort.Normalized();
 		move = move.Normalized() * Core::g_globalConfig->Speed;
 		Core::g_MainCamera->SetPosition(move + Core::g_MainCamera->GetPosition());
 	}
