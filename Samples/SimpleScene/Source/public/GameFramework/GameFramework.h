@@ -1,6 +1,6 @@
 /*
 * IMPORTANT!!!
-* 
+*
 * This file is an interface to the engine
 * Please note that any change to this file should be reflected in the engine itself,
 * and every engine change of this kind leads to incompatibility with the other samples
@@ -34,6 +34,8 @@ public:
 private:
 	void RegisterComponents();
 	void RegisterSystems();
+
+	void RegisterAdditionalSystems(flecs::world& world);
 
 private:
 	flecs::world m_World;

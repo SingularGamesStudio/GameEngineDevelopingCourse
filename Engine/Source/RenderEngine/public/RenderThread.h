@@ -8,6 +8,7 @@
 namespace GameEngine::Render
 {
 	class RenderEngine;
+	class RenderObject;
 
 	enum class ERC : uint32_t
 	{
@@ -28,6 +29,8 @@ namespace GameEngine::Render
 
 		template<typename... Args>
 		void EnqueueCommand(ERC command, Args... args);
+
+		void Destroy(RenderObject* renderObject);
 
 		bool IsRenderThread() const;
 		void OnEndFrame();

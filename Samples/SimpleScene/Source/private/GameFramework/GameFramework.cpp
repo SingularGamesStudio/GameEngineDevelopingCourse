@@ -11,6 +11,7 @@
 #include <GameFramework/GameFramework.h>
 #include <Input/Controller.h>
 #include <RenderObject.h>
+#include <RenderEngine.h>
 #include <flecs.h>
 
 using namespace GameEngine;
@@ -49,6 +50,55 @@ void GameFramework::Init()
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 }
 
+//adding it here because DefaultGeometry.h cannot be imported from different files, as the Cube function is defined in .h file. And when i try to move the function definition in it into a .cpp, it fails to find the declaration.
+void GameFramework::RegisterAdditionalSystems(flecs::world& world)
+{
+	//Shooting system
+	world.system<Position, CameraPtr, const Speed, const ControllerPtr>()
+		.each([&](flecs::entity e, Position& position, CameraPtr& camera, const Speed& speed, const ControllerPtr& controller)
+			{
+				if (controller.ptr->IsPressed("Shoot") && !e.has<ShootCountdown>())
+				{
+					e.set(ShootCountdown{ 30 });
+					Math::Vector3f vel = camera.ptr->GetViewDir() * 10;
+					//shooting is bound to space button, because for some reason if i bind lmb, after a single click it records a press every frame
+					flecs::entity cubeMoving = world.entity()
+						.set(Position{ position.x, position.y, position.z })
+						.set(Velocity{ vel.x, vel.y, vel.z })
+						.set(Gravity{ 0.f, -9.8065f, 0.f })
+						.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
+						.set(Bounciness{ 0.3f })
+						.set(DestroyCountdown{ 200 })
+						.set(DestroyFlag{ false })
+						.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+						.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
+				}
+			});
+
+	world.system<ShootCountdown>()
+		.each([&](flecs::entity e, ShootCountdown& countdown) {
+		countdown.ttl--;
+		if (countdown.ttl <= 0) {
+			e.remove<ShootCountdown>();
+		}
+			});
+
+	// Cleanup system
+	static const EntitySystem::ECS::RenderThreadPtr* renderThread = world.get<EntitySystem::ECS::RenderThreadPtr>();
+	world.system<const DestroyFlag>()
+		.each([&](flecs::entity e, const DestroyFlag& flag)
+			{
+				if (flag.destroy) {
+					GameEngine::Render::RenderObject* mesh = e.get<EntitySystem::ECS::RenderObjectPtr>()->ptr;
+					if (mesh != nullptr) {
+						e.destruct();
+						renderThread->ptr->Destroy(mesh);
+					}
+				}
+
+			});
+}
+
 void GameFramework::RegisterComponents()
 {
 	// Exposing these components for the lua system
@@ -59,6 +109,9 @@ void GameFramework::RegisterComponents()
 	ECS_META_COMPONENT(m_World, Bounciness);
 	ECS_META_COMPONENT(m_World, ShiverAmount);
 	ECS_META_COMPONENT(m_World, FrictionAmount);
+	ECS_META_COMPONENT(m_World, DestroyCountdown);
+	ECS_META_COMPONENT(m_World, ShootCountdown);
+	ECS_META_COMPONENT(m_World, DestroyFlag);
 	ECS_META_COMPONENT(m_World, Speed);
 }
 
@@ -66,6 +119,7 @@ void GameFramework::RegisterSystems()
 {
 	RegisterEcsMeshSystems(m_World);
 	RegisterEcsControlSystems(m_World);
+	RegisterAdditionalSystems(m_World);
 }
 
 void GameFramework::Update(float dt)

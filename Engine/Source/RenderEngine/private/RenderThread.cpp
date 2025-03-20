@@ -57,6 +57,11 @@ namespace GameEngine::Render
 		return m_RenderThreadId == std::this_thread::get_id();
 	}
 
+	void RenderThread::Destroy(RenderObject* renderObject) {
+		//this should probably ues enqueueRenderCommand, but it drops an error when matching template invoke.
+		m_RenderEngine->DeleteRenderObject(renderObject);
+	}
+
 	template<typename... Args>
 	void RenderThread::EnqueueCommand(ERC command, Args... args)
 	{

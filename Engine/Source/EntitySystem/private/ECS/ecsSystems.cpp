@@ -14,9 +14,9 @@ namespace GameEngine::EntitySystem::ECS
 
 		world.system<const GeometryPtr, RenderObjectPtr>()
 			.each([&](flecs::entity e, const GeometryPtr& geometry, RenderObjectPtr& renderObject)
-		{
-			renderThread->ptr->EnqueueCommand(Render::ERC::CreateRenderObject, geometry.ptr, renderObject.ptr);
-			e.remove<GeometryPtr>();
-		});
+				{
+					renderThread->ptr->EnqueueCommand(Render::ERC::CreateRenderObject, geometry.ptr, renderObject.ptr);
+					e.remove<GeometryPtr>();
+				});
 	}
 }

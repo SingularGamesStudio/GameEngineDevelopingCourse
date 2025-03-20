@@ -60,9 +60,45 @@ local function BounceSystem(it)
     end
 end
 
+local function TTLSystem(it)
+    for ttl, flag, ent in ecs.each(it) do
+        ttl.ttl = ttl.ttl-1
+        if ttl.ttl<=0 then
+            flag.destroy = true
+        end
+    end
+end
+
+local function CollisionSystem(it)
+    local pos = {}
+    local vel = {}
+    local ent = {}
+    for pos1, vel1, ent1 in ecs.each(it) do
+        table.insert(pos, pos1)
+        table.insert(vel, vel1)
+        table.insert(ent, ent1)
+    end
+    for i = 1, #pos do
+        for j = 1, #pos do
+            local sq_dist = (pos[i].x - pos[j].x)*(pos[i].x - pos[j].x)+(pos[i].y - pos[j].y)*(pos[i].y - pos[j].y)+(pos[i].z - pos[j].z)*(pos[i].z - pos[j].z)
+            if true then
+                vel[i].x = 0
+                vel[i].y = 0
+                vel[i].z = 0
+                vel[j].x = 0
+                vel[j].y = 0
+                vel[j].z = 0
+            end
+        end
+    end
+end
+
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
 
+ecs.system(TTLSystem, "TTLSystem", ecs.OnUpdate, "DestroyCountdown, DestroyFlag")
+ecs.system(CollisionSystem, "CollisionSystem", ecs.OnUpdate, "Position, Velocity")

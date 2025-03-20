@@ -10,51 +10,66 @@
 #endif
 
 ECS_STRUCT(Position,
-{
-	float x;
-	float y;
-	float z;
-});
+	{
+		float x;
+		float y;
+		float z;
+	});
 
 ECS_STRUCT(Velocity,
-{
-	float x;
-	float y;
-	float z;
-});
+	{
+		float x;
+		float y;
+		float z;
+	});
 
 ECS_STRUCT(Gravity,
-{
-	float x;
-	float y;
-	float z;
-});
+	{
+		float x;
+		float y;
+		float z;
+	});
 
 ECS_STRUCT(BouncePlane,
-{
-	float x;
-	float y;
-	float z;
-	float w;
-});
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+	});
 
 ECS_STRUCT(Bounciness,
-{
-	float value;
-});
+	{
+		float value;
+	});
 
 ECS_STRUCT(ShiverAmount,
-{
-	float value;
-});
+	{
+		float value;
+	});
+
+ECS_STRUCT(DestroyCountdown,
+	{
+		float ttl;
+	});
+
+ECS_STRUCT(ShootCountdown,
+	{
+		float ttl;
+	});
+
+ECS_STRUCT(DestroyFlag,
+	{
+		bool destroy;
+	});
 
 ECS_STRUCT(FrictionAmount,
-{
-	float value;
-});
+	{
+		float value;
+	});
 
 ECS_STRUCT(Speed,
-{
-	float value;
-});
+	{
+		float value;
+	});
 
