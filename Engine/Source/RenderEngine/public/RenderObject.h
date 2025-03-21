@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Vector.h>
+#include <Colors.h>
 #include <RenderEngine/export.h>
 #include <RenderThread.h>
 
@@ -22,6 +23,7 @@ namespace GameEngine::Render
 		~RenderObject();
 
 	public:
+		void SetAlbedo(RenderCore::Color col);
 		void SetRenderData(HAL::RenderData* renderData) { m_RenderData = renderData; }
 		HAL::RenderData* GetRenderData() const { return m_RenderData; }
 

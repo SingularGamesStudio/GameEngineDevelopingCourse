@@ -30,6 +30,7 @@ void GameFramework::Init()
 		.set(Gravity{ 0.f, -9.8065f, 0.f })
 		.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
 		.set(Bounciness{ 0.3f })
+		.set(SceneObject{})
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
@@ -40,12 +41,14 @@ void GameFramework::Init()
 		.set(Gravity{ 0.f, -9.8065f, 0.f })
 		.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
 		.set(Bounciness{ 1.f })
+		.set(SceneObject{})
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
 
 	flecs::entity camera = m_World.entity()
 		.set(Position{ 0.0f, 12.0f, -10.0f })
 		.set(Speed{ 10.f })
+		.set(Player{})
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 }
@@ -60,7 +63,7 @@ void GameFramework::RegisterAdditionalSystems(flecs::world& world)
 				if (controller.ptr->IsPressed("Shoot") && !e.has<ShootCountdown>())
 				{
 					e.set(ShootCountdown{ 30 });
-					Math::Vector3f vel = camera.ptr->GetViewDir() * 10;
+					Math::Vector3f vel = camera.ptr->GetViewDir() * 100;
 					//shooting is bound to space button, because for some reason if i bind lmb, after a single click it records a press every frame
 					flecs::entity cubeMoving = world.entity()
 						.set(Position{ position.x, position.y, position.z })
@@ -68,8 +71,7 @@ void GameFramework::RegisterAdditionalSystems(flecs::world& world)
 						.set(Gravity{ 0.f, -9.8065f, 0.f })
 						.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
 						.set(Bounciness{ 0.3f })
-						.set(DestroyCountdown{ 200 })
-						.set(DestroyFlag{ false })
+						.set(BulletDestructor{ 100 })
 						.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 						.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
 				}
@@ -83,19 +85,12 @@ void GameFramework::RegisterAdditionalSystems(flecs::world& world)
 		}
 			});
 
-	// Cleanup system
-	static const EntitySystem::ECS::RenderThreadPtr* renderThread = world.get<EntitySystem::ECS::RenderThreadPtr>();
-	world.system<const DestroyFlag>()
-		.each([&](flecs::entity e, const DestroyFlag& flag)
-			{
-				if (flag.destroy) {
-					GameEngine::Render::RenderObject* mesh = e.get<EntitySystem::ECS::RenderObjectPtr>()->ptr;
-					if (mesh != nullptr) {
-						e.destruct();
-						renderThread->ptr->Destroy(mesh);
-					}
-				}
-
+	world.system<SceneObject, const EntitySystem::ECS::RenderObjectPtr>()
+		.each([&](flecs::entity e, SceneObject& switcher, const EntitySystem::ECS::RenderObjectPtr& controller) {
+		if (switcher.switchColor) {
+			switcher.switchColor = false;
+			controller.ptr->SetAlbedo(RenderCore::Colors::Blue);
+		}
 			});
 }
 
@@ -109,10 +104,12 @@ void GameFramework::RegisterComponents()
 	ECS_META_COMPONENT(m_World, Bounciness);
 	ECS_META_COMPONENT(m_World, ShiverAmount);
 	ECS_META_COMPONENT(m_World, FrictionAmount);
-	ECS_META_COMPONENT(m_World, DestroyCountdown);
-	ECS_META_COMPONENT(m_World, ShootCountdown);
-	ECS_META_COMPONENT(m_World, DestroyFlag);
 	ECS_META_COMPONENT(m_World, Speed);
+
+	ECS_META_COMPONENT(m_World, Player);
+	ECS_META_COMPONENT(m_World, BulletDestructor);
+	ECS_META_COMPONENT(m_World, ShootCountdown);
+	ECS_META_COMPONENT(m_World, SceneObject);
 }
 
 void GameFramework::RegisterSystems()

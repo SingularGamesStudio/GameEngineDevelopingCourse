@@ -48,19 +48,19 @@ ECS_STRUCT(ShiverAmount,
 		float value;
 	});
 
-ECS_STRUCT(DestroyCountdown,
+ECS_STRUCT(BulletDestructor,
 	{
 		float ttl;
+	});
+
+ECS_STRUCT(SceneObject,
+	{
+		bool switchColor;
 	});
 
 ECS_STRUCT(ShootCountdown,
 	{
 		float ttl;
-	});
-
-ECS_STRUCT(DestroyFlag,
-	{
-		bool destroy;
 	});
 
 ECS_STRUCT(FrictionAmount,
@@ -71,5 +71,10 @@ ECS_STRUCT(FrictionAmount,
 ECS_STRUCT(Speed,
 	{
 		float value;
+	});
+
+ECS_STRUCT(Player,
+	{
+		float val;
 	});
 

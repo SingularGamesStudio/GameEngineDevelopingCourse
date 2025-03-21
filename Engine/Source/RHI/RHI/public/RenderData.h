@@ -6,6 +6,7 @@
 #include <RHIMaterial.h>
 #include <RHI/RHI/export.h>
 #include <Vector.h>
+#include <Colors.h>
 
 namespace GameEngine::Render
 {
@@ -27,7 +28,9 @@ namespace GameEngine::Render
 				delete m_Mesh;
 				delete m_Material;
 			}
-
+			void SetAlbedo(RenderCore::Color col) {
+				m_Material->SetAlbedo(col);
+			}
 			RHIMesh* GetMesh() { return m_Mesh; }
 			RHIMaterial* GetMaterial() { return m_Material; }
 			const Math::Vector3f& GetPosition(size_t frame) const { return m_Position[frame]; }

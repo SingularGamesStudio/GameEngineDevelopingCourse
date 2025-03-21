@@ -61,36 +61,56 @@ local function BounceSystem(it)
 end
 
 local function TTLSystem(it)
-    for ttl, flag, ent in ecs.each(it) do
+    for ttl, ent in ecs.each(it) do
         ttl.ttl = ttl.ttl-1
         if ttl.ttl<=0 then
-            flag.destroy = true
+            ecs.delete(ent)
         end
     end
 end
 
-local function CollisionSystem(it)
-    local pos = {}
-    local vel = {}
-    local ent = {}
-    for pos1, vel1, ent1 in ecs.each(it) do
-        table.insert(pos, pos1)
-        table.insert(vel, vel1)
-        table.insert(ent, ent1)
+local positions = {}
+local velocities = {}
+local entities = {}
+local hits = {}
+
+--save bullets
+local function CollisionSave(it)
+    for pos, vel, tag, ent in ecs.each(it) do
+        table.insert(positions, pos)
+        table.insert(velocities, vel)
+        table.insert(entities, ent)
+        table.insert(hits, false)
     end
-    for i = 1, #pos do
-        for j = 1, #pos do
-            local sq_dist = (pos[i].x - pos[j].x)*(pos[i].x - pos[j].x)+(pos[i].y - pos[j].y)*(pos[i].y - pos[j].y)+(pos[i].z - pos[j].z)*(pos[i].z - pos[j].z)
-            if true then
-                vel[i].x = 0
-                vel[i].y = 0
-                vel[i].z = 0
-                vel[j].x = 0
-                vel[j].y = 0
-                vel[j].z = 0
+end
+
+--find collisions
+local function CollisionEval(it)
+    for pos, vel, tag, ent in ecs.each(it) do
+        for i = 1, #positions do
+            local sq_dist = (positions[i].x - pos.x)*(positions[i].x - pos.x)+(positions[i].y - pos.y)*(positions[i].y - pos.y)+(positions[i].z - pos.z)*(positions[i].z - pos.z)
+            if sq_dist<5 then
+                tag.switchColor = true
+                vel.x=vel.x + rand_flt(-4, 4)
+                vel.y=vel.y + rand_flt(-4, 4)
+                vel.z=vel.z + rand_flt(-4, 4)
+                hits[i] = true
             end
         end
     end
+end
+
+--clear saved bullets
+local function CollisionClear(it)
+    for i = 1, #positions do
+        if hits[i] then
+            ecs.delete(entities[i])
+        end
+    end
+    positions = {}
+    velocities = {}
+    entities = {}
+    hits = {}
 end
 
 
@@ -100,5 +120,7 @@ ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAm
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
 
-ecs.system(TTLSystem, "TTLSystem", ecs.OnUpdate, "DestroyCountdown, DestroyFlag")
-ecs.system(CollisionSystem, "CollisionSystem", ecs.OnUpdate, "Position, Velocity")
+ecs.system(TTLSystem, "TTLSystem", ecs.OnUpdate, "BulletDestructor")
+ecs.system(CollisionSave, "CollisionSave", ecs.OnUpdate, "Position, Velocity, BulletDestructor")
+ecs.system(CollisionEval, "CollisionEval", ecs.OnUpdate, "Position, Velocity, SceneObject")
+ecs.system(CollisionClear, "CollisionClear", ecs.OnUpdate, "Player")

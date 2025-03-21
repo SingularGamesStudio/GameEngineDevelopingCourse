@@ -34,10 +34,14 @@ namespace GameEngine::Render
 		public:
 			RHIMaterial() = delete;
 			RHIMaterial(HAL::RHIMaterial::ID id)
-				: m_ID(id) {}
+				: m_ID(id) {
+			}
 
 			HAL::RHIMaterial::ID GetID() { return m_ID; }
 			const HAL::RHIMaterial::ID& GetID() const { return m_ID; }
+			void SetAlbedo(RenderCore::Color col) {
+				m_Albedo = col;
+			}
 
 			RenderCore::Color GetAlbedo() const
 			{

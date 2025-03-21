@@ -13,6 +13,10 @@ namespace GameEngine::Render
 		return m_RenderData->GetPosition(frame);
 	}
 
+	void RenderObject::SetAlbedo(RenderCore::Color col) {
+		m_RenderData->SetAlbedo(col);
+	}
+
 	void RenderObject::SetPosition(Math::Vector3f position, size_t frame)
 	{
 		if (m_RenderData != nullptr) [[unlikely]]
