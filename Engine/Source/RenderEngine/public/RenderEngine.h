@@ -4,6 +4,7 @@
 #include <RenderEngine/export.h>
 #include <RenderObject.h>
 #include <Window/IWindow.h>
+#include <set>
 
 namespace GameEngine::Render
 {
@@ -21,12 +22,13 @@ namespace GameEngine::Render
 		void OnResize();
 
 		void CreateRenderObject(RenderCore::Geometry* geometry, RenderObject* renderObject);
+		void DeleteRenderObject(RenderObject* renderObject);
 
 	private:
 		uint32_t m_swapChainWidth;
 		uint32_t m_swapChainHeight;
 
-		std::vector<RenderObject*> m_RenderObjects;
+		std::set<RenderObject*> m_RenderObjects;
 
 		std::shared_ptr<HAL::RHIAdapter> m_rhi;
 	};

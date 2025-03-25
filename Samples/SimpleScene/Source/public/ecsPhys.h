@@ -51,3 +51,14 @@ struct Speed
 	float value;
 };
 
+struct Player {
+	bool _;
+};
+
+struct TTL {
+	float ttl;
+};
+
+struct BoxCollider {
+	int id;
+};

@@ -11,7 +11,7 @@ namespace GameEngine::Render
 	{
 		m_rhi = HAL::RHIHelper::CreateRHI("D3D12");
 		m_rhi->Init();
-		
+
 		m_rhi->ExecuteCommandLists();
 		m_rhi->Flush();
 	}
@@ -55,6 +55,11 @@ namespace GameEngine::Render
 		HAL::RenderData* renderData = new HAL::RenderData(meshID, materialID);
 		renderObject->SetRenderData(renderData);
 
-		m_RenderObjects.push_back(renderObject);
+		m_RenderObjects.insert(renderObject);
+	}
+
+	void RenderEngine::DeleteRenderObject(RenderObject* renderObject)
+	{
+		m_RenderObjects.erase(renderObject);
 	}
 }

@@ -25,6 +25,7 @@ void GameFramework::Init()
 		.set(Position{ 0.0f, 12.0f, -10.0f })
 		.set(Speed{ 10.f })
 		.set(CameraPtr{ Core::g_MainCamera })
+		.set(Player{})
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 }
 
@@ -71,6 +72,13 @@ void GameFramework::RegisterComponentsReflection()
 
 	m_World.component<JumpSpeed>()
 		.member<float>("value");
+
+	m_World.component<Player>()
+		.member<bool>("_");
+	m_World.component<TTL>()
+		.member<float>("ttl");
+	m_World.component<BoxCollider>()
+		.member<int>("id");
 }
 
 void GameFramework::RegisterSystems()

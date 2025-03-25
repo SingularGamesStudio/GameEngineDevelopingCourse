@@ -60,9 +60,58 @@ local function BounceSystem(it)
     end
 end
 
+local function TTLSystem(it)
+    for ttl, ent in ecs.each(it) do
+        ttl.ttl = ttl.ttl-1
+        if ttl.ttl<=0 then
+            ecs.delete(ent)
+        end
+    end
+end
+
+local positions = {}
+local colliders = {}
+local entities = {}
+
+--save colliders
+local function CollisionSave(it)
+    for pos, coll, ent in ecs.each(it) do
+        table.insert(positions, pos)
+        table.insert(colliders, coll)
+        table.insert(entities, ent)
+    end
+end
+
+--find collisions
+local function CollisionEval(it)
+    for pos, vel, coll, ent in ecs.each(it) do
+        for i = 1, #positions do
+            if coll.id ~= colliders[i].id then
+                local sq_dist = (positions[i].x - pos.x)*(positions[i].x - pos.x)+(positions[i].y - pos.y)*(positions[i].y - pos.y)+(positions[i].z - pos.z)*(positions[i].z - pos.z)
+                if sq_dist<5 then
+                    vel.x=vel.x + rand_flt(-4, 4)
+                    vel.y=vel.y + rand_flt(-4, 4)
+                    vel.z=vel.z + rand_flt(-4, 4)
+                end
+            end
+        end
+    end
+end
+
+--clear saved colliders
+local function CollisionClear(it)
+    positions = {}
+    colliders = {}
+    entities = {}
+end
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
 
+ecs.system(TTLSystem, "TTLSystem", ecs.OnUpdate, "TTL")
+ecs.system(CollisionSave, "CollisionSave", ecs.OnUpdate, "Position, BoxCollider")
+ecs.system(CollisionEval, "CollisionEval", ecs.OnUpdate, "Position, Velocity, BoxCollider")
+ecs.system(CollisionClear, "CollisionClear", ecs.OnUpdate, "Player")
