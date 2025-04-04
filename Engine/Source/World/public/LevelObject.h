@@ -10,7 +10,8 @@ namespace GameEngine::World
 		using ComponentName = std::string;
 		using ComponentDesc = std::string;
 		using Component = std::pair<ComponentName, ComponentDesc>;
-		using ComponentList = std::vector<Component>;
+		//never invalidates pointers
+		using ComponentList = std::deque<Component>;
 
 	public:
 		LevelObject() = default;

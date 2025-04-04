@@ -44,7 +44,7 @@ namespace GameEngine
 				{
 					assert(World::WorldParser::GetCustomComponents().contains(geometryAttribute->second));
 
-					entity.set(EntitySystem::LevelEditorECS::PositionDesc{ true,  &positionAttribute->second });
+					entity.set(EntitySystem::LevelEditorECS::PositionDesc{ &positionAttribute->second });
 
 					// Can be set to 0 since it doesn't matter now, will be updated by the system
 					entity.set(EntitySystem::EditorECS::Position{ 0.0f, 0.0f, 0.0f });
@@ -128,19 +128,17 @@ namespace GameEngine
 
 		void LevelEditor::NewObject() {
 			flecs::entity entity;
-			World::LevelObject newLevelObject;
+			World::LevelObject* newLevelObject = m_Level->AddLevelObject(World::LevelObject());
 
 			entity = world.entity("New Object");
-			newLevelObject.SetName("New Object");
+			newLevelObject->SetName("New Object");
 
-			newLevelObject.AddComponent("Position", "0.0f,0.0f,0.0f");
-			entity.set(EntitySystem::LevelEditorECS::PositionDesc{ false,  &newLevelObject.GetComponents()[0].second });
-
-			newLevelObject.AddComponent("GeometryPtr", "Cube");
+			newLevelObject->AddComponent("GeometryPtr", "Cube");
 			entity.set(GeometryPtr{ Cube() });
 
+			newLevelObject->AddComponent("Position", "0.0, 0.0, 0.0");
+			entity.set(EntitySystem::LevelEditorECS::PositionDesc{ &newLevelObject->GetComponents()[1].second });
 
-			m_Level->AddLevelObject(newLevelObject);
 			// Can be set to 0 since it doesn't matter now, will be updated by the system
 			entity.set(EntitySystem::EditorECS::Position{ 0.0f, 0.0f, 0.0f });
 		}
@@ -154,6 +152,7 @@ namespace GameEngine
 		{
 			Math::Vector3f(-1.0f, -1.0f, -1.0f),
 			Math::Vector3f(-1.0f, +1.0f, -1.0f),
+
 			Math::Vector3f(+1.0f, +1.0f, -1.0f),
 			Math::Vector3f(+1.0f, -1.0f, -1.0f),
 			Math::Vector3f(-1.0f, -1.0f, +1.0f),

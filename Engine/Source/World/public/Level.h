@@ -8,16 +8,17 @@ namespace GameEngine::World
 {
 	class WORLD_API Level final
 	{
-	public:
-		using LevelObjectList = std::vector<LevelObject>;
+	public://never invalidates pointers
+		using LevelObjectList = std::deque<LevelObject>;
 
 	public:
-		Level() = delete;
+		Level() {
+		};
 		Level(std::string& name);
 		~Level() = default;
 
 	public:
-		void AddLevelObject(const LevelObject& levelObject);
+		LevelObject* AddLevelObject(const LevelObject& levelObject);
 		const LevelObjectList& GetLevelObjects() const { return m_LevelObjectList; }
 		LevelObjectList& GetLevelObjects() { return m_LevelObjectList; }
 

@@ -9,7 +9,6 @@ namespace GameEngine::EntitySystem::LevelEditorECS
 {
 	struct PositionDesc
 	{
-		bool ok;
 		const World::LevelObject::ComponentDesc* value;
 	};
 

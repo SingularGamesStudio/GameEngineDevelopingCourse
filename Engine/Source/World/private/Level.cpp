@@ -7,8 +7,9 @@ namespace GameEngine::World
 	{
 	}
 
-	void Level::AddLevelObject(const LevelObject& levelObject)
+	LevelObject* Level::AddLevelObject(const LevelObject& levelObject)
 	{
 		m_LevelObjectList.push_back(levelObject);
+		return &m_LevelObjectList[m_LevelObjectList.size() - 1];
 	}
 }
