@@ -33,7 +33,8 @@ namespace GameEngine::EntitySystem::LevelEditorECS
 		world.system<const PositionDesc, EntitySystem::EditorECS::Position>()
 			.each([&](const PositionDesc& positionDesc, EntitySystem::EditorECS::Position& position)
 				{
-					ParsePosition(positionDesc, position);
+					if (positionDesc.ok)
+						ParsePosition(positionDesc, position);
 				});
 	}
 }

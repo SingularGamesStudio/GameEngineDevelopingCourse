@@ -17,6 +17,7 @@ namespace GameEngine
 
 		public:
 			virtual void Draw() override;
+			void NewObject();
 			virtual void Update(float dt) override;
 			virtual const char* GetName() const override { return "Level Editor"; }
 
@@ -27,6 +28,8 @@ namespace GameEngine
 			Core::Timer m_SaveButtonMessageTimer;
 			bool m_SaveButtonPressed = false;
 			float m_TimeToShowSaveButtonMessage = 3.f;
+
+			flecs::world& world;
 
 			std::optional<World::Level> m_Level = std::nullopt;
 		};
